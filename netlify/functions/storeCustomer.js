@@ -1,43 +1,51 @@
+// netlify/functions/storeCustomer.js
 const fs = require('fs');
 const path = require('path');
 
-const filePath = path.resolve(__dirname, 'customers.json');
+exports.handler = async (event) => {
+    const filePath = path.join(__dirname, 'customers.json');
 
-exports.handler = async function (event, context) {
-  if (event.httpMethod === 'POST') {
-    const data = JSON.parse(event.body);
-
-    let customers = [];
-    if (fs.existsSync(filePath)) {
-      const json = fs.readFileSync(filePath, 'utf-8');
-      customers = JSON.parse(json);
+    if (event.httpMethod === 'GET') {
+        // Read the existing data from the JSON file
+        try {
+            const data = fs.readFileSync(filePath);
+            return {
+                statusCode: 200,
+                body: data.toString(),
+            };
+        } catch (error) {
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ message: 'Error reading data' }),
+            };
+        }
     }
 
-    customers.push(data);
+    if (event.httpMethod === 'POST') {
+        // Add new customer data to the JSON file
+        try {
+            const newCustomer = JSON.parse(event.body);
+            const data = fs.readFileSync(filePath);
+            const customers = JSON.parse(data);
 
-    fs.writeFileSync(filePath, JSON.stringify(customers, null, 2));
+            // Add the new customer to the array
+            customers.push(newCustomer);
+            fs.writeFileSync(filePath, JSON.stringify(customers, null, 2));
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ message: 'Customer added successfully' }),
-    };
-  }
-
-  if (event.httpMethod === 'GET') {
-    let customers = [];
-    if (fs.existsSync(filePath)) {
-      const json = fs.readFileSync(filePath, 'utf-8');
-      customers = JSON.parse(json);
+            return {
+                statusCode: 200,
+                body: JSON.stringify({ message: 'Customer added successfully' }),
+            };
+        } catch (error) {
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ message: 'Error saving data' }),
+            };
+        }
     }
 
     return {
-      statusCode: 200,
-      body: JSON.stringify(customers),
+        statusCode: 405,
+        body: JSON.stringify({ message: 'Method Not Allowed' }),
     };
-  }
-
-  return {
-    statusCode: 405,
-    body: 'Method Not Allowed',
-  };
 };
