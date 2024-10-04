@@ -1,1 +1,5 @@
-[]
+{
+    "waitingCustomers": [],
+    "servedCustomers": [],
+    "ticketCounter": 1
+}
