@@ -11,6 +11,18 @@ const tabs = document.querySelectorAll('.tab');
 const waitingCustomersDiv = document.getElementById('waitingCustomers');
 const servedCustomersDiv = document.getElementById('servedCustomers');
 
+// Load data from JSON file on page load
+window.onload = async () => {
+    const response = await fetch('./data/customers.json');
+    const data = await response.json();
+    waitingCustomers = data.waitingCustomers || [];
+    servedCustomers = data.servedCustomers || [];
+    ticketCounter = data.ticketCounter || 1;
+
+    updateWaitingTable();
+    updateServedTable();
+};
+
 newCustomerBtn.addEventListener('click', toggleNewCustomerForm);
 deleteEODBtn.addEventListener('click', clearAllCustomers);
 reportBtn.addEventListener('click', generateReport);
@@ -21,7 +33,7 @@ function toggleNewCustomerForm() {
     newCustomerForm.style.display = newCustomerForm.style.display === 'none' ? 'block' : 'none';
 }
 
-function addNewCustomer(e) {
+async function addNewCustomer(e) {
     e.preventDefault();
     const name = document.getElementById('name').value;
     const description = document.getElementById('description').value;
@@ -30,17 +42,19 @@ function addNewCustomer(e) {
 
     const newCustomer = { ticketNumber: ticketCounter++, name, description, service, timestamp };
     waitingCustomers.push(newCustomer);
+    await saveData();
     updateWaitingTable();
     newCustomerForm.style.display = 'none';
     customerForm.reset();
 }
 
-function serveCustomer(ticketNumber) {
+async function serveCustomer(ticketNumber) {
     const index = waitingCustomers.findIndex(c => c.ticketNumber === ticketNumber);
     if (index !== -1) {
         const servedCustomer = waitingCustomers.splice(index, 1)[0];
         servedCustomer.servedAt = new Date();
         servedCustomers.push(servedCustomer);
+        await saveData();
         updateWaitingTable();
         updateServedTable();
     }
@@ -103,14 +117,81 @@ function calculateWaitingTime(start, end) {
     }
 }
 
-function clearAllCustomers() {
-    waitingCustomers = [];
-    servedCustomers = [];
-    ticketCounter = 1;
-    updateWaitingTable();
-    updateServedTable();
+function generateReport() {
+    let reportWindow = window.open('', '', 'width=800,height=600');
+    let reportContent = `
+        <html>
+        <head>
+            <title>Served Customers Report</title>
+            <style>
+                body { font-family: Arial, sans-serif; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
+            </style>
+        </head>
+        <body>
+            <h1>Served Customers Report</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ticket Number</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Service</th>
+                        <th>Time</th>
+                        <th>Served At</th>
+                        <th>Waiting Time</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+    servedCustomers.forEach(customer => {
+        reportContent += `
+            <tr>
+                <td>${customer.ticketNumber}</td>
+                <td>${customer.name}</td>
+                <td>${customer.description}</td>
+                <td>${customer.service}</td>
+                <td>${customer.timestamp.toLocaleString()}</td>
+                <td>${customer.servedAt.toLocaleString()}</td>
+                <td>${calculateWaitingTime(customer.timestamp, customer.servedAt)}</td>
+            </tr>`;
+    });
+
+    reportContent += `
+                </tbody>
+            </table>
+        </body>
+        </html>`;
+
+    reportWindow.document.write(reportContent);
+    reportWindow.document.close();
+    reportWindow.print();
 }
 
-function generateReport() {
-    alert(`Report:\n\nTotal Served: ${servedCustomers.length}\nRemaining in Queue: ${waitingCustomers.length}`);
+// Clear all customers at EOD
+async function clearAllCustomers() {
+    waitingCustomers = [];
+    servedCustomers = [];
+    await saveData();
+    updateWaitingTable();
+    updateServedTable();
+    alert("WARNING: All Queues will be cleared.");
+}
+
+// Save data to customers.json
+async function saveData() {
+    const data = {
+        waitingCustomers,
+        servedCustomers,
+        ticketCounter
+    };
+    await fetch('./data/customers.json', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
 }
