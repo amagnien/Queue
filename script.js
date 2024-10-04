@@ -1,41 +1,31 @@
-document.addEventListener('DOMContentLoaded', () => {
-    fetchCustomers(); // Fetch existing customers on page load
-});
+const newCustomerBtn = document.getElementById('newCustomerBtn');
+const deleteEODBtn = document.getElementById('deleteEODBtn');
+const reportBtn = document.getElementById('reportBtn');
+const newCustomerForm = document.getElementById('newCustomerForm');
+const customerForm = document.getElementById('customerForm');
 
-async function fetchCustomers() {
-    const response = await fetch('/.netlify/functions/storeCustomer');
-    if (response.ok) {
-        const customers = await response.json();
-        customers.forEach(customer => {
-            waitingCustomers.push(customer);
-        });
-        updateWaitingTable(); // Update the waiting table with fetched customers
-    }
+newCustomerBtn.addEventListener('click', toggleNewCustomerForm);
+deleteEODBtn.addEventListener('click', clearAllCustomers);
+reportBtn.addEventListener('click', generateReport);
+customerForm.addEventListener('submit', addNewCustomer);
+
+function toggleNewCustomerForm() {
+    console.log('New Customer button clicked');
+    newCustomerForm.style.display = newCustomerForm.style.display === 'none' ? 'block' : 'none';
 }
 
-async function addNewCustomer(e) {
+function addNewCustomer(e) {
     e.preventDefault();
-    const name = document.getElementById('name').value;
-    const description = document.getElementById('description').value;
-    const service = document.getElementById('service').value;
-    const timestamp = new Date();
+    console.log('Form submitted');
+    // Your code to add the customer
+}
 
-    const newCustomer = { ticketNumber: ticketCounter++, name, description, service, timestamp };
+function clearAllCustomers() {
+    console.log('EOD delete button clicked');
+    // Your code to clear customers
+}
 
-    // Send POST request to store the new customer
-    const response = await fetch('/.netlify/functions/storeCustomer', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newCustomer),
-    });
-
-    if (response.ok) {
-        waitingCustomers.push(newCustomer);
-        updateWaitingTable();
-        customerForm.reset();
-    } else {
-        console.error('Failed to add customer');
-    }
+function generateReport() {
+    console.log('Report button clicked');
+    // Your code to generate report
 }
