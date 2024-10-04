@@ -195,3 +195,17 @@ async function saveData() {
         body: JSON.stringify(data)
     });
 }
+async function saveData() {
+    const data = {
+        waitingCustomers,
+        servedCustomers,
+        ticketCounter
+    };
+    await fetch('/.netlify/functions/customers', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+}
