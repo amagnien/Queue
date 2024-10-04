@@ -17,15 +17,15 @@ function toggleNewCustomerForm() {
 function addNewCustomer(e) {
     e.preventDefault();
     console.log('Form submitted');
-    // Your code to add the customer
+    // Your logic to add customer
 }
 
 function clearAllCustomers() {
     console.log('EOD delete button clicked');
-    // Your code to clear customers
+    // Your logic to clear customers
 }
 
 function generateReport() {
     console.log('Report button clicked');
-    // Your code to generate report
+    // Your logic to generate report
 }
