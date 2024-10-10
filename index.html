@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queue Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Queue Management System</h1>
+        <div class="buttons">
+            <button id="newCustomer">New Customer</button>
+            <button id="generateReport">Generate Report</button>
+            <button id="deleteEOD" class="danger">Delete at EOD</button>
+        </div>
+        <div class="form" id="newCustomerForm">
+            <label for="ticketNumber">Ticket Number:</label>
+            <input type="text" id="ticketNumber" readonly>
+            <label for="name">Name:</label>
+            <input type="text" id="customerName">
+            <label for="description">Description:</label>
+            <textarea id="customerDescription"></textarea>
+            <label for="serviceRequested">Service Requested:</label>
+            <input type="text" id="customerServiceRequested">
+            <label for="serviceType">Service Type:</label>
+            <select id="customerServiceType">
+                <option value="RT">RT</option>
+                <option value="LT">LT</option>
+                <option value="Others">Others</option>
+            </select>
+            <button id="submitCustomer">Submit</button>
+        </div>
+        <div id="reportContainer"></div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
