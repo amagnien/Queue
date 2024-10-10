@@ -1,57 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Queue Management System</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queue Management System</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Queue Management System</h1>
+    <h1>Bank Queue Management System</h1>
 
-    <div class="form-group">
-      <label for="name">Name:</label>
-      <input type="text" id="name" class="form-control">
+    <!-- Buttons for actions -->
+    <button id="newCustomerBtn">New Customer</button>
+    <button id="reportBtn">Report</button>
+    <button id="deleteEODBtn" class="red">Delete at EOD</button>
+
+    <!-- New Customer Form Modal -->
+    <div id="newCustomerForm">
+        <h2>New Customer</h2>
+        <label>Ticket Number: <span id="ticketNumber"></span></label>
+        <input type="text" id="customerName" placeholder="Enter customer name">
+        <input type="text" id="customerDescription" placeholder="Enter description">
+        <input type="text" id="serviceRequested" placeholder="Service requested">
+        <select id="serviceType">
+            <option value="RT">RT</option>
+            <option value="LT">LT</option>
+            <option value="Others">Others</option>
+        </select>
+        <button id="submitCustomer">Submit</button>
     </div>
 
-    <div class="form-group">
-      <label for="description">Description:</label>
-      <textarea id="description" class="form-control"></textarea>
+    <!-- Customer Lists -->
+    <div id="tabs">
+        <button id="waitingTab">Waiting Customers</button>
+        <button id="servedTab">Served Customers</button>
+    </div>
+    
+    <div id="waitingCustomers">
+        <!-- List of waiting customers will be dynamically generated here -->
+    </div>
+    
+    <div id="servedCustomers">
+        <!-- List of served customers will be dynamically generated here -->
     </div>
 
-    <div class="form-group">
-      <label for="serviceRequested">Service Requested:</label>
-      <input type="text" id="serviceRequested" class="form-control">
-    </div>
-
-    <div class="form-group">
-      <label for="serviceType">Service Type:</label>
-      <select id="serviceType" class="form-control">
-        <option value="RT">RT</option>
-        <option value="LT">LT</option>
-        <option value="Others">Others</option>
-      </select>
-    </div>
-
-    <button id="newCustomer" class="btn btn-primary">New Customer</button>
-
-    <div class="tabs">
-      <input type="radio" name="tab" id="tab1" checked>
-      <label for="tab1">Waiting Customers</label>
-      <input type="radio" name="tab" id="tab2">
-      <label for="tab2">Served Customers</label>
-
-      <div class="tab-content">
-        <div id="waitingCustomers"></div>
-        <div id="servedCustomers"></div>
-      </div>
-    </div>
-
-    <button id="report" class="btn btn-secondary">Generate Report</button>
-    <button id="deleteEOD" class="btn btn-danger">Delete at EOD</button>
-  </div>
-
-  <script src="script.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
