@@ -1,123 +1,67 @@
-const newCustomerBtn = document.getElementById('newCustomer');
-const reportBtn = document.getElementById('report');
-const deleteEODBtn = document.getElementById('deleteEOD');
-const waitingCustomersDiv = document.getElementById('waitingCustomers');
-const servedCustomersDiv = document.getElementById('servedCustomers');
+let ticketNumber = 1;
+let waitingCustomers = [];
+let servedCustomers = [];
 
-const nameInput = document.getElementById('name');
-const descriptionInput = document.getElementById('description');
-const serviceRequestedInput = document.getElementById('serviceRequested');
-const serviceTypeSelect = document.getElementById('serviceType');
+// Generate ticket number and show form
+document.getElementById('newCustomerBtn').addEventListener('click', () => {
+    document.getElementById('ticketNumber').textContent = ticketNumber++;
+    document.getElementById('newCustomerForm').style.display = 'block';
+});
 
-let customers = [];
+// Handle form submission
+document.getElementById('submitCustomer').addEventListener('click', () => {
+    let name = document.getElementById('customerName').value;
+    let description = document.getElementById('customerDescription').value;
+    let serviceRequested = document.getElementById('serviceRequested').value;
+    let serviceType = document.getElementById('serviceType').value;
+    
+    waitingCustomers.push({ 
+        ticket: ticketNumber - 1, 
+        name, 
+        description, 
+        serviceRequested, 
+        serviceType, 
+        time: new Date().toLocaleTimeString() 
+    });
+    
+    displayWaitingCustomers();
+    document.getElementById('newCustomerForm').style.display = 'none';
+});
 
-function createCustomer() {
-  const name = nameInput.value;
-  const description = descriptionInput.value;
-  const serviceRequested = serviceRequestedInput.value;
-  const serviceType = serviceTypeSelect.value;
-
-  if (!name || !description || !serviceRequested || !serviceType) {
-    alert('Please fill in all required fields.');
-    return;
-  }
-
-  const customer = {
-    name,
-    description,
-    serviceRequested,
-    serviceType,
-    waitingTime: Date.now()
-  };
-
-  customers.push(customer);
-
-  updateWaitingCustomersList();
-
-  // Clear form fields
-  nameInput.value = '';
-  descriptionInput.value = '';
-  serviceRequestedInput.value = '';
-  serviceTypeSelect.value = 'RT';
+// Display waiting customers
+function displayWaitingCustomers() {
+    let container = document.getElementById('waitingCustomers');
+    container.innerHTML = '';
+    
+    waitingCustomers.forEach(customer => {
+        let div = document.createElement('div');
+        div.textContent = `Ticket ${customer.ticket}: ${customer.name} - ${customer.serviceRequested}`;
+        let serveBtn = document.createElement('button');
+        serveBtn.textContent = 'Serve Customer';
+        serveBtn.addEventListener('click', () => {
+            serveCustomer(customer);
+        });
+        div.appendChild(serveBtn);
+        container.appendChild(div);
+    });
 }
 
-function updateWaitingCustomersList() {
-  waitingCustomersDiv.innerHTML = '';
-
-  customers.forEach((customer, index) => {
-    const customerDiv = document.createElement('div');
-    customerDiv.textContent = `${index + 1}. ${customer.name}`;
-    customerDiv.addEventListener('click', () => serveCustomer(index));
-    waitingCustomersDiv.appendChild(customerDiv);
-  });
+// Move customer to served
+function serveCustomer(customer) {
+    servedCustomers.push(customer);
+    waitingCustomers = waitingCustomers.filter(c => c.ticket !== customer.ticket);
+    displayWaitingCustomers();
+    displayServedCustomers();
 }
 
-function serveCustomer(index) {
-  const servedCustomer = customers.splice(index, 1)[0];
-  servedCustomer.servedTime = Date.now();
-
-  updateServedCustomersList();
-  updateWaitingCustomersList();
+// Display served customers
+function displayServedCustomers() {
+    let container = document.getElementById('servedCustomers');
+    container.innerHTML = '';
+    
+    servedCustomers.forEach(customer => {
+        let div = document.createElement('div');
+        div.textContent = `Ticket ${customer.ticket}: ${customer.name} - ${customer.serviceRequested}`;
+        container.appendChild(div);
+    });
 }
-
-function updateServedCustomersList() {
-  servedCustomersDiv.innerHTML = '';
-
-  customers.forEach((customer, index) => {
-    const customerDiv = document.createElement('div');
-    customerDiv.textContent = `${index + 1}. ${customer.name}`;
-    servedCustomersDiv.appendChild(customerDiv);
-  });
-}
-
-function generateReport() {
-  const report = `
-    <h2>Queue Management System Report</h2>
-
-    <table>
-      <tr>
-        <th>#</th>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Service Requested</th>
-        <th>Service Type</th>
-        <th>Waiting Time (ms)</th>
-        <th>Served Time (ms)</th>
-      </tr>
-      ${customers.map((customer, index) => `
-        <tr>
-          <td>${index + 1}</td>
-          <td>${customer.name}</td>
-          <td>${customer.description}</td>
-          <td>${customer.serviceRequested}</td>
-          <td>${customer.serviceType}</td>
-          <td>${customer.waitingTime}</td>
-          <td>${customer.servedTime || '-'}</td>
-        </tr>
-      `).join('')}
-    </table>
-
-    <p>Average Waiting Time: ${calculateAverageWaitingTime()} ms</p>
-  `;
-
-  const reportWindow = window.open('', 'Report', 'width=800,height=600');
-  reportWindow.document.write(report);
-  reportWindow.document.close();
-}
-
-function calculateAverageWaitingTime() {
-  const waitingTimes = customers.filter(customer => customer.servedTime).map(customer => customer.servedTime - customer.waitingTime);
-  return waitingTimes.length > 0 ? Math.round(waitingTimes.reduce((sum, time) => sum + time, 0) / waitingTimes.length) : 0;
-}
-
-function deleteEOD() {
-  if (confirm('Are you sure you want to delete all customer data?')) {
-    customers = [];
-    updateWaitingCustomersList();
-    updateServedCustomersList();
-  }
-}
-
-newCustomerBtn.addEventListener('click', createCustomer);
-reportBtn.addEventListener('click', generateReport);
-deleteEODBtn.addEventListener('click', deleteEOD);
