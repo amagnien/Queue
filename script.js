@@ -1,3 +1,6 @@
+// Global variable to store the current ticket number
+let currentTicketNumber = 1;
+
 // Submit customer data
 document.getElementById('submit').addEventListener('click', () => {
     const ticketNumber = generateTicketNumber();
@@ -21,13 +24,21 @@ document.getElementById('submit').addEventListener('click', () => {
     })
     .then(response => response.json())
     .then(data => {
-        // Handle response from Netlify Function
-        console.log(data);
-        // Reset form
-        // ...
+        if (data.success) {
+            // Handle successful creation
+            console.log('Customer created successfully');
+            // Reset form
+            document.getElementById('name').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('serviceRequested').value = '';
+            document.getElementById('serviceType').value = '';
+        } else {
+            // Handle errors
+            console.error('Error creating customer:', data.error);
+        }
     })
     .catch(error => {
-        console.error(error);
+        console.error('Error:', error);
     });
 });
 
@@ -37,10 +48,14 @@ document.getElementById('generateReport').addEventListener('click', () => {
     .then(response => response.json())
     .then(data => {
         // Render report in the HTML
-        document.getElementById('reportContainer').innerHTML = data.reportHTML;
+        const waitingTableHTML = data.waitingTableHTML;
+        const servedTableHTML = data.servedTableHTML;
+
+        document.getElementById('waitingCustomersTable').innerHTML = waitingTableHTML;
+        document.getElementById('servedCustomersTable').innerHTML = servedTableHTML;
     })
     .catch(error => {
-        console.error(error);
+        console.error('Error generating report:', error);
     });
 });
 
@@ -50,10 +65,19 @@ document.getElementById('deleteEOD').addEventListener('click', () => {
         fetch('/.netlify/functions/deleteCustomers')
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            if (data.success) {
+                console.log('All customers deleted successfully');
+            } else {
+                console.error('Error deleting customers:', data.error);
+            }
         })
         .catch(error => {
-            console.error(error);
+            console.error('Error:', error);
         });
     }
 });
+
+// Function to generate ticket numbers starting from 1
+function generateTicketNumber() {
+    return `TICKET-${currentTicketNumber++}`;
+}
