@@ -1,4 +1,7 @@
-// Initialize Firebase with your configuration
+// Import Firebase configuration from firebase.js
+import firebaseConfig from './firebase.js';
+
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
 // Reference to the database
@@ -11,12 +14,12 @@ function generateTicketNumber() {
 }
 
 // Submit customer data
-document.getElementById('submit').addEventListener('click', () => {
+document.getElementById('submitCustomer').addEventListener('click', () => {
   const ticketNumber = generateTicketNumber();
-  const name = document.getElementById('name').value;
-  const description = document.getElementById('description').value;
-  const serviceRequested = document.getElementById('serviceRequested').value;
-  const serviceType = document.getElementById('serviceType').value;
+  const name = document.getElementById('customerName').value;
+  const description = document.getElementById('customerDescription').value;
+  const serviceRequested = document.getElementById('customerServiceRequested').value;
+  const serviceType = document.getElementById('customerServiceType').value;
   const currentTime = new Date().getTime();
 
   // Push data to Firebase with serviceTime initially set to 0
@@ -31,10 +34,10 @@ document.getElementById('submit').addEventListener('click', () => {
   });
 
   // Reset form after submission
-  document.getElementById('name').value = '';
-  document.getElementById('description').value = '';
-  document.getElementById('serviceRequested').value = '';
-  document.getElementById('serviceType').value = '';
+  document.getElementById('customerName').value = '';
+  document.getElementById('customerDescription').value = '';
+  document.getElementById('customerServiceRequested').value = '';
+  document.getElementById('customerServiceType').value = '';
 });
 
 // Generate report with waiting times
