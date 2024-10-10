@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Queue Management System</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <button id="newCustomer">New Customer</button>
+    <button id="report">Generate Report</button>
+    <button id="deleteEOD" class="danger">Delete at EOD</button>
+
+    <div class="tabs">
+      <input type="radio" name="tab" id="tab1" checked>
+      <label for="tab1">Waiting Customers</label>
+      <input type="radio" name="tab" id="tab2">
+      <label for="tab2">Served Customers</label>
+
+      <div class="tab-content">
+        <div id="waitingCustomers"></div>
+        <div id="servedCustomers"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
