@@ -1,4 +1,3 @@
-// Import Firebase configuration from firebase.js
 import firebaseConfig from './firebase.js';
 
 // Initialize Firebase
