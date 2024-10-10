@@ -8,4 +8,4 @@ const firebaseConfig = {
   measurementId: "G-H24CWGLPRE"
 };
 
-firebase.initializeApp(firebaseConfig);
+export default firebaseConfig;
